@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-# The python script checks the status of the Linux agent
 # Usage: python check_agent.py IP 
-# Author: Yan Le
 
 import socket
 import ssl
@@ -29,11 +27,9 @@ def create_socket(host, port):
 def normal_command(host, port, code):
     ssl_sock = create_socket(host, int(port))
     msg = "33"
-    #ssl_sock.write(chr(code)) #write control
     ssl_sock.write(str(len(msg)))
     ssl_sock.write(chr(255)) # end of length
     ssl_sock.write(msg) #id content
-    #ssl_sock.write('\r\n') # eof mark
     print ssl_sock.read()
     s.close()
   

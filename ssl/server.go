@@ -89,6 +89,7 @@ func write_data( conn *net.Conn, data *[]byte ) error{
 
 
 func square( conn *net.Conn ) {
+    defer (*conn).Close()
     data := make([]byte, 0)
     err := read_data(conn, &data)
     if err != nil {
@@ -104,7 +105,6 @@ func square( conn *net.Conn ) {
     n *= n
     data = []byte(strconv.Itoa(n))
     write_data(conn, &data) 
-    (*conn).Close()
 }
 
 
