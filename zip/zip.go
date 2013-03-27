@@ -2,11 +2,11 @@ package main
 
 import (
   "archive/zip"
-  "io/ioutil"
   "log"
   "fmt"
   "os"
   "path/filepath"
+  "io"
 )
 
 
@@ -24,24 +24,31 @@ func zip_dir(dir string, zip_name string) error{
       return err
     }
 
-    f, err := w.Create(path); 
-    if err != nil {
-      return err
-    }
     if info.IsDir() {
       return nil
     }
 
-    content, err := ioutil.ReadFile(path);
+    fh, err := zip.FileInfoHeader(info)
+    fh.Name = path
     if err != nil {
       return err
     }
 
-    _, err = f.Write(content)
+    out, err := w.CreateHeader(fh);
     if err != nil {
       return err
     }
 
+    in, err := os.Open(path)
+    if err != nil {
+      return err
+    }
+
+    if _, err = io.Copy(out, in); err != nil {
+      fmt.Println("inner copy")
+      return err
+    }
+    in.Close()
 
     return nil
   }
