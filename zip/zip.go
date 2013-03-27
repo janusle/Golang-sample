@@ -24,12 +24,13 @@ func zip_dir(dir string, zip_name string) error{
       return err
     }
 
+    fh, err := zip.FileInfoHeader(info)
     if info.IsDir() {
-      return nil
+      fh.Name = path + "/"
+    } else {
+      fh.Name = path
     }
 
-    fh, err := zip.FileInfoHeader(info)
-    fh.Name = path
     if err != nil {
       return err
     }
@@ -39,16 +40,18 @@ func zip_dir(dir string, zip_name string) error{
       return err
     }
 
-    in, err := os.Open(path)
-    if err != nil {
-      return err
-    }
+    if !info.IsDir() { //only copy content when file is regular file
+      in, err := os.Open(path)
+      if err != nil {
+        return err
+      }
 
-    if _, err = io.Copy(out, in); err != nil {
-      fmt.Println("inner copy")
-      return err
+      if _, err = io.Copy(out, in); err != nil {
+        fmt.Println("inner copy")
+        return err
+      }
+      in.Close()
     }
-    in.Close()
 
     return nil
   }
